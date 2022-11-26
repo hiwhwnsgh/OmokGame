@@ -20,8 +20,8 @@ class omokgame:
     def __init__(self, sz):
         self.__size=sz
         self.__bd = board(self.__size)
-        #self.__black = player(-1)
-        self.__black = iot6789_student(-1)
+        self.__black = player(-1)
+        #self.__black = iot6789_student(-1)
         self.__white = iot12345_student(1)
         self.__turns=0
         self.__next= -1
@@ -50,7 +50,7 @@ class omokgame:
                     time_delay = end - start   # exec_time= next() method
                     time_b +=1
                     print(time_delay)
-                    if ((time_b >= 4) or (self.validCheck(stn_b) and (time_delay < 5)) ):
+                    if ((time_b >= 4) or (self.validCheck(stn_b) and (time_delay < 120)) ):
                         break
                 if (time_b < 4) :
                     self.__bd.update(stn_b)
