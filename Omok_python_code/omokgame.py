@@ -108,6 +108,7 @@ class omokgame:
                 if (self.__bd.get(i,j)!=0):
                     check=self.__bd.get(i,j)+self.__bd.get(i,j+1)+self.__bd.get(i,j+2)+self.__bd.get(i,j+3)+self.__bd.get(i,j+4)
                     if (check == (5 * self.__bd.get(i,j))):
+                        
                         return True
                     
         # vertical omok

@@ -54,12 +54,18 @@ class iot12345_student(player):
             if not IsIndexOutCheck(y+dirY*-1,x+dirX*-1):
                 if grid[y+dirY*-1][x+dirX*-1]==self._color*-1:
                     AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1)
+            if IsIndexOutCheck(y+dirY*-1,x+dirX*-1):
+                AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1)
             if grid[y+dirY][x+dirX] == self._color:
                 AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1.5)
+            if grid[y+dirY][x+dirX] == self._color*-1:
+                arr.append([count+0.5,y+dirY,x+dirX])
+                return
             if grid[y+dirY][x+dirX] == 0:
                 if y+dirY+dirY>0 and x+dirX+dirX>0 and y+dirY+dirY<len(cpBoard) and x+dirX+dirX<len(cpBoard) :
                     if grid[y+dirY+dirY][x+dirX+dirX] == self._color:
                         arr.append([count-2,y+dirY,x+dirX])
+            
                 if count<=-4: # 승리
                     arr.append([count-100,y+dirY,x+dirX])
                 else:
@@ -95,7 +101,6 @@ class iot12345_student(player):
                             if not IsIndexOutCheck(yPosition,xPosition):
                                 arr.append([1,yPosition,xPosition])
         arr.sort()
-        print(arr)
         idx = 0
         while True:
             if board[arr[idx][1]][arr[idx][2]] == 0:
@@ -103,7 +108,7 @@ class iot12345_student(player):
             idx+=1
         stn.setX(arr[idx][1])
         stn.setY(arr[idx][2])
-        print(arr[idx][1],arr[idx][2])
+        print(arr[idx])
                                 
                             
 
