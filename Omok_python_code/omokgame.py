@@ -80,6 +80,7 @@ class omokgame:
                 break
         self.__winner = self.__next * (-1)
         self.msg_display()
+        return self.__winner
         
     def msg_display(self):
         if (self.__turns !=0 and self.__winner ==0):

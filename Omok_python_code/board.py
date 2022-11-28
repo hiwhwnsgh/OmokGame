@@ -9,7 +9,7 @@ from os import system, name
 import copy  #깊은 복사를 하기위한 모듈 ( modified by DS Koo)
 
 class board:
-    def __init__(self, size=15):
+    def __init__(self, size=19):
         self.__size=size
         self.__game_board=[[0 for i in range(self.__size)] for j in range(self.__size)]
     def __del__(self):  # 소멸자 

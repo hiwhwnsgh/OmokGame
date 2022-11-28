@@ -19,18 +19,19 @@ class iot6789_student(player):
         pass 
 
     def next(self, board, length):  # override
-
-        # [ 0] [ 1] [ 2]
-        # [ 3] (@@) [ 4]
-        # [ 5] [ 6] [ 7]
-        def search(local_X, local_Y):
+        # next()의 내장 함수: 특정 돌을 기준으로 8방향 주변 탐색, 최대 거리 및 연장 가능한 위치를 리턴함
+        def search_around(local_X, local_Y, local_target_color):
             direction_list = ((1, -1), (1, 0), (1, 1), (0, -1), (0, 1), (-1, -1), (-1, 0), (-1, 1)) # 방향 튜플
             distance_list = [0] * 8   # 기준점과의 거리를 저장할 리스트
             is_reflection_list = [False] * 8    # 돌 놓을 곳이 막히면 반사할지 여부를 저장하는 리스트
 
+            # [ 0] [ 1] [ 2]
+            # [ 3] (@@) [ 4]
+            # [ 5] [ 6] [ 7]
+
             # 주변 8칸 탐색
             for i in range(8):
-                dx = direction_list[i][0]
+                dx = direction_list[i][0]       # 흑돌일 경우 첫 위치는 랜덤
                 dy = direction_list[i][1]
 
                 distance = 1  # 기준점과의 거리
@@ -44,7 +45,7 @@ class iot6789_student(player):
                     
                     move_point = board[move_X][move_Y]      # 이동 후의 지점
 
-                    if move_point == (self._color * -1):    # 상대 돌이 직선으로 이어져 있으면
+                    if move_point == local_target_color:    # 상대 돌이 직선으로 이어져 있으면
                         # print([move_X, move_Y], "직선 이동")
                         distance += 1                       # 거리 값 증가
                         continue
@@ -74,26 +75,41 @@ class iot6789_student(player):
             result_x = local_X + longest_X * distance_list[longest_index]
             result_y = local_Y + longest_Y * distance_list[longest_index]
 
-            return result_x, result_y, distance_list[longest_index]
+            return distance_list[longest_index], result_x, result_y
 
+        # next()의 내장 함수: 바둑판 전체를 탐색하여, 실제로 돌을 놓을 위치를 리턴함
+        def search_board():
+            max_X = randint(12,15)
+            max_Y = randint(10,15)
+            max_distance = 0
+
+            for i in range(length):
+                for j in range(length):
+                    # 상대의 돌이 있으면 돌 주변 8방향을 탐색하여 최대 길이 계산
+                    if board[i][j] == (self._color * -1):
+                        tmp_distance, tmp_X, tmp_Y = search_around(i, j, self._color * -1)
+                        # 계산한 위치에 돌을 놓을 수 있으면 갱신
+                        if (0 <= tmp_X < length) and (0 <= tmp_Y < length) and (board[tmp_X][tmp_Y] == 0) and (tmp_distance > max_distance):
+                            max_distance = tmp_distance
+                            max_X = tmp_X
+                            max_Y = tmp_Y
+                    # 내 돌이 있으면 돌 주변 8방향을 탐색하여 최대 길이 계산
+                    elif board[i][j] == self._color:
+                        tmp_distance, tmp_X, tmp_Y = search_around(i, j, self._color)
+                        # 계산한 위치에 돌을 놓을 수 있으면 갱신
+                        if (0 <= tmp_X < length) and (0 <= tmp_Y < length) and (board[tmp_X][tmp_Y] == 0) and (tmp_distance > max_distance):
+                            max_distance = tmp_distance
+                            max_X = tmp_X
+                            max_Y = tmp_Y
+                        # 내 돌이 4목일 경우, 즉시 5목으로 만들도록 값을 리턴함
+                            if max_distance >= 4:
+                                return max_X, max_Y
+            return max_X, max_Y
 
         print (" **** Black player : My Turns **** ")
         stn = stone(self._color)  # protected variable \
 
-        x = randint(0,length-1) % length
-        y = randint(0,length-1) % length
-
-        max_distance = 0
-        for i in range(length):
-            for j in range(length):
-                if board[i][j] == (self._color * -1):
-                    tmp_X, tmp_Y, tmp_distance = search(i, j)
-                    # 계산한 위치에 돌을 놓을 수 있으면
-                    if (0 <= tmp_X < length) and (0 <= tmp_Y < length) and (board[tmp_X][tmp_Y] == 0) and (tmp_distance > max_distance):
-                        x = tmp_X
-                        y = tmp_Y
-                        max_distance = tmp_distance
-
+        x, y = search_board()
         stn.setX(x)
         stn.setY(y)
         print (" === Black player was completed ==== ")

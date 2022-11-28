@@ -11,13 +11,13 @@ from board import *
 
 class stone:
     def __init__(self):
-        self.__size=15  # private
+        self.__size=19  # private
         self.__x = 7 
         self.__y = 7
         self.__bw=0
     
     
-    def __init__(self, stn, sz=15):
+    def __init__(self, stn, sz=19):
         self.__size=sz  # private : variable with double underscore 
         self.__x = (self.__size-1)//2 # integer division
         self.__y = (self.__size-1)//2 # integer division

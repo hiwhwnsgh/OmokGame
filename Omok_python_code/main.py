@@ -10,7 +10,8 @@ from omokgame import *
 def main():
     #game =omokgame(15)
     game =omokgame(19)
-    game.game_start()
-    return 0
+    num = game.game_start()
+    return num
 if __name__ =="__main__":
+
     main()

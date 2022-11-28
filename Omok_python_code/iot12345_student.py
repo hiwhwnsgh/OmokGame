@@ -28,8 +28,9 @@ class iot12345_student(player):
         def IsIndexOutCheck(y,x):
             if y<0 or x<0 or y>=len(cpBoard) or x>=len(cpBoard[0]):
                 return True
-
-        # 수비 깊이 탐색
+        """
+         수비 깊이 탐색
+        """
         def DefendingDFS(grid,y,x,dirY,dirX,count):
             # 보드 바깥이면 종료
             if IsIndexOutCheck(y+dirY,x+dirX):
@@ -38,21 +39,27 @@ class iot12345_student(player):
             if grid[y+dirY][x+dirX] == self._color:
                 return
             # 빈공간이면
+
             if grid[y+dirY][x+dirX] == 0:
+                
                 # 상대방 돌과 돌 사이에 빈공간이 있다면 우선순위 높임
                 if y+dirY+dirY>0 and x+dirX+dirX>0 and y+dirY+dirY<len(cpBoard) and x+dirX+dirX<len(cpBoard):
                     if grid[y+dirY+dirY][x+dirX+dirX] == self._color*-1:
                         arr.append([count-4,y+dirY,x+dirX])
                 arr.append([count,y+dirY,x+dirX])
+                
                 return
             # 상대방 돌의 내가 놓을려는 방향 반대편에 나의 돌이 존재한다면 우선순위 낮춤
             if not IsIndexOutCheck(y+dirY*-1,x+dirX*-1):
                 if grid[y+dirY*-1][x+dirX*-1]==self._color:
-                    DefendingDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1)
+                    DefendingDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1.5)
             # 상대방 돌을 계속 발견시
-            DefendingDFS(grid,y+dirY,x+dirX,dirY,dirX,count-2)
-        
-        # 공격 깊이 탐색
+            
+            DefendingDFS(grid,y+dirY,x+dirX,dirY,dirX,count-2.5)
+
+        """
+         공격 깊이 탐색
+        """
         def AttackDFS(grid,y,x,dirY,dirX,count):
             # 보드 바깥이면 종료
             if IsIndexOutCheck(y+dirY,x+dirX):
@@ -66,10 +73,9 @@ class iot12345_student(player):
                 AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1)
             # 같은방향에 나의돌을 발견한다면
             if grid[y+dirY][x+dirX] == self._color:
-                AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1.5)
+                AttackDFS(grid,y+dirY,x+dirX,dirY,dirX,count-1.6)
             # 같은방향에 상대방 돌을 발견한다면
             if grid[y+dirY][x+dirX] == self._color*-1:
-                arr.append([count+0.5,y+dirY,x+dirX])
                 return
             # 빈공간 발견 시
             if grid[y+dirY][x+dirX] == 0:
@@ -78,7 +84,7 @@ class iot12345_student(player):
                     if grid[y+dirY+dirY][x+dirX+dirX] == self._color:
                         arr.append([count-2,y+dirY,x+dirX])
                 # 승리
-                if count<=-4: 
+                if count<=-6.5: 
                     arr.append([count-100,y+dirY,x+dirX])
                 else:
                     arr.append([count,y+dirY,x+dirX])
@@ -91,18 +97,17 @@ class iot12345_student(player):
                     for idx in range(8):
                         xPosition = j+direction[idx][0]
                         yPosition = i+direction[idx][1]
-                        if IsIndexOutCheck(yPosition,xPosition):
-                            continue
-                        if cpBoard[yPosition][xPosition] == -1:
-                            DefendingDFS(cpBoard,i,j,direction[idx][1],direction[idx][0],1)
+                        if xPosition>=0 and yPosition >=0 and yPosition<len(cpBoard) and xPosition<len(cpBoard):
+                            if cpBoard[yPosition][xPosition] == -1:
+                                
+                                DefendingDFS(cpBoard,i,j,direction[idx][1],direction[idx][0],0)
                 if cpBoard[i][j] == self._color:
                     for idx in range(8):
                         xPosition = j+direction[idx][0]
                         yPosition = i+direction[idx][1]
-                        if IsIndexOutCheck(yPosition,xPosition):
-                            continue
-                        if cpBoard[yPosition][xPosition] != -1:
-                            AttackDFS(cpBoard,i,j,direction[idx][1],direction[idx][0],0)
+                        if xPosition>=0 and yPosition >=0 and yPosition<len(cpBoard) and xPosition<len(cpBoard):
+                            if cpBoard[yPosition][xPosition] != -1:
+                                AttackDFS(cpBoard,i,j,direction[idx][1],direction[idx][0],0)
         if not arr:
             for i in range(len(cpBoard)):
                 for j in range(len(cpBoard[0])):
@@ -112,17 +117,18 @@ class iot12345_student(player):
                             yPosition = i+direction[idx][1]
                             if not IsIndexOutCheck(yPosition,xPosition):
                                 arr.append([1,yPosition,xPosition])
-        arr.sort()
-        idx = 0
-        while True:
-            if board[arr[idx][1]][arr[idx][2]] == 0:
-                break
-            idx+=1
-        stn.setX(arr[idx][1])
-        stn.setY(arr[idx][2])
-        print(arr[idx])
-                                
-                            
+        if arr:
+            arr.sort()
+            idx = 0
+            while True:
+                if board[arr[idx][1]][arr[idx][2]] == 0:
+                    break
+                idx+=1
+            stn.setX(arr[idx][1])
+            stn.setY(arr[idx][2])
+        else:
+            stn.setX(randint(12,15))
+            stn.setY(randint(10,15))
 
         print (" === White player was completed ==== ")
         return stn
